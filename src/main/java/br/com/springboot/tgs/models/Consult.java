@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -35,6 +37,9 @@ public class Consult {
     // @Column(nullable = false)
     // private String dateTime;
 
+    @ManyToOne
+    @JoinColumn(name = "procedure_id")
+    private Procedure procedure;
 
     // @Column(nullable = false)
     // private Integer procedure;
@@ -49,6 +54,15 @@ public class Consult {
         return id;
     }
 
+    // PROCEDURE
+    @JsonBackReference
+    public Procedure getProcedure() {
+        return procedure;
+    }
+
+    public void setProcedure(Procedure procedure) {
+        this.procedure = procedure;
+    }
 
     // STATUS
     public Boolean getStatus() {
