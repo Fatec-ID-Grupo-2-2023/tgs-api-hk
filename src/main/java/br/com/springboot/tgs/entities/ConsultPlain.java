@@ -5,6 +5,10 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import br.com.springboot.tgs.entities.models.Patient;
+import br.com.springboot.tgs.entities.models.Procedure;
+import br.com.springboot.tgs.entities.models.User;
+
 public class ConsultPlain {
     private Integer id;
     private Patient patient;

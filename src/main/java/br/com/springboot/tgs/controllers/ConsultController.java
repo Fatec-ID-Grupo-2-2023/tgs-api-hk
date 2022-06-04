@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.springboot.tgs.entities.Consult;
 import br.com.springboot.tgs.entities.ConsultPlain;
 import br.com.springboot.tgs.entities.LineChart;
 import br.com.springboot.tgs.entities.Schedule;
-import br.com.springboot.tgs.models.RestControllerModel;
+import br.com.springboot.tgs.entities.models.Consult;
+import br.com.springboot.tgs.interfaces.RestControllerModel;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
 @RestController

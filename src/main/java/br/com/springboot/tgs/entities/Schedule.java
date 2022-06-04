@@ -5,6 +5,8 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import br.com.springboot.tgs.entities.models.User;
+
 public class Schedule {
     private User dentist;
     private User employee;

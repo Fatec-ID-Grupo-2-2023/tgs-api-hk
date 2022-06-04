@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.springboot.tgs.entities.User;
-import br.com.springboot.tgs.models.RestControllerModel;
+import br.com.springboot.tgs.entities.models.User;
+import br.com.springboot.tgs.interfaces.RestControllerModel;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @RestController

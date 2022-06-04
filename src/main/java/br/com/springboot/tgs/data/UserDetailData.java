@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.springboot.tgs.entities.User;
+import br.com.springboot.tgs.entities.models.User;
 
 public class UserDetailData implements UserDetails {
     private Optional<User> user;
