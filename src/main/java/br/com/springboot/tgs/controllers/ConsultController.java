@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.springboot.tgs.entities.Consult;
+import br.com.springboot.tgs.entities.ConsultPlain;
 import br.com.springboot.tgs.entities.LineChart;
 import br.com.springboot.tgs.entities.Schedule;
 import br.com.springboot.tgs.models.RestControllerModel;
@@ -94,39 +96,70 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @PostMapping("/schedule/open")
-    public ResponseEntity<HttpStatus> scheduleOpen(@RequestBody Schedule schedule) {
-        try {           
-            while(!schedule.getStartDate().isAfter(schedule.getFinalDate())){
+    public ResponseEntity<Object> scheduleOpen(@RequestBody Schedule schedule) {
+        try {
+            Consult test = null;
+            while (!schedule.getStartDate().isAfter(schedule.getFinalDate())) {
                 LocalTime currentWorkTime = schedule.getStartWorkHour();
 
-                while(!currentWorkTime.isAfter(schedule.getStartLunchHour().minusHours(schedule.getConsultDuration().getHour()).minusMinutes(schedule.getConsultDuration().getMinute()))){
+                while (!currentWorkTime
+                        .isAfter(schedule.getStartLunchHour().minusHours(schedule.getConsultDuration().getHour())
+                                .minusMinutes(schedule.getConsultDuration().getMinute()))) {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                    LocalDateTime currentDateTime = LocalDateTime.parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
-                    
+                    LocalDateTime currentDateTime = LocalDateTime
+                            .parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+
                     Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
-                                        
+
                     createAndUpdate(consult);
 
-                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour()).plusMinutes(schedule.getConsultDuration().getMinute());
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour())
+                            .plusMinutes(schedule.getConsultDuration().getMinute());
                 }
-                
+
                 currentWorkTime = schedule.getFinalLunchHour();
 
-                while(!currentWorkTime.isAfter(schedule.getFinalWorkHour().minusHours(schedule.getConsultDuration().getHour()).minusMinutes(schedule.getConsultDuration().getMinute()))){
+                while (!currentWorkTime
+                        .isAfter(schedule.getFinalWorkHour().minusHours(schedule.getConsultDuration().getHour())
+                                .minusMinutes(schedule.getConsultDuration().getMinute()))) {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                    LocalDateTime currentDateTime = LocalDateTime.parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
-                    
+                    LocalDateTime currentDateTime = LocalDateTime
+                            .parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+
                     Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
-                                        
+                    test = consult;
                     createAndUpdate(consult);
 
-                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour()).plusMinutes(schedule.getConsultDuration().getMinute());
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour())
+                            .plusMinutes(schedule.getConsultDuration().getMinute());
                 }
 
                 schedule.setStartDate(schedule.getStartDate().plusDays(1));
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(test);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    /**
+     * 
+     * @param consultPlain - Recebe uma consulta para ser agendada
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/")
+    public ResponseEntity<Object> scheduleAppointment(@RequestBody ConsultPlain consultPlain) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime currentDateTime = LocalDateTime
+                    .parse(consultPlain.getDate().toString() + " " + consultPlain.getHour().toString(), formatter);
+
+            Consult consult = new Consult(consultPlain.getId(), consultPlain.getPatient(), consultPlain.getDentist(),
+                    currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), true);
+
+            createAndUpdate(consult);
+            return ResponseEntity.status(HttpStatus.OK).body(consult);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -138,8 +171,7 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
-    @PostMapping("/")
-    public ResponseEntity<Object> createAndUpdate(@RequestBody Consult consult) {
+    public ResponseEntity<Object> createAndUpdate(Consult consult) {
         try {
             consult.setStatus(true);
 
@@ -149,11 +181,8 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
             return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
         } catch (Exception e) {
-            LOGGER.error("Create consult fail - ", e.getMessage());
-
-            // return
-            // ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(consult);
+            LOGGER.error("Create consult fail - ", e);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Create consult fail - " + e);
         }
     }
 

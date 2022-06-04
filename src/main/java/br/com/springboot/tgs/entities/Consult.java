@@ -14,15 +14,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "consults")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -52,6 +48,21 @@ public class Consult {
     private User employee;
 
     private Boolean status;
+
+    public Consult() {
+
+    }
+
+    public Consult(Integer id, Patient patient, User dentist, LocalDateTime dateTime, Procedure procedure,
+            User employee, Boolean status) {
+        this.id = id;
+        this.patient = patient;
+        this.dentist = dentist;
+        this.dateTime = dateTime;
+        this.procedure = procedure;
+        this.employee = employee;
+        this.status = status;
+    }
 
     public Consult(User dentist, LocalDateTime dateTime, User employee, Boolean status) {
         this.dentist = dentist;
