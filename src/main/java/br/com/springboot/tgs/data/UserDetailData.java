@@ -7,13 +7,13 @@ import java.util.Optional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.springboot.tgs.entities.Dentist;
+import br.com.springboot.tgs.models.User;
 
 public class UserDetailData implements UserDetails {
-    private Optional<Dentist> dentist;
+    private Optional<User> user;
 
-    public UserDetailData(Optional<Dentist> dentist){
-        this.dentist = dentist;
+    public UserDetailData(Optional<User> user){
+        this.user = user;
     }
 
     @Override
@@ -25,13 +25,13 @@ public class UserDetailData implements UserDetails {
     @Override
     public String getPassword() {
         // TODO Auto-generated method stub
-        return dentist.orElse(new Dentist()).getPassword();
+        return user.orElse(new User()).getPassword();
     }
 
     @Override
     public String getUsername() {
         // TODO Auto-generated method stub
-        return dentist.orElse(new Dentist()).getCro();
+        return user.orElse(new User()).getUserId();
     }
 
     @Override

@@ -14,23 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.springboot.tgs.entities.Dentist;
-import br.com.springboot.tgs.repositories.DentistRepository;
+import br.com.springboot.tgs.models.User;
+import br.com.springboot.tgs.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/dentists") 
 public class DentistController {
 
   @Autowired
-  private DentistRepository dentistRepository;
+  private UserRepository userRepository;
 
   @Autowired
   private PasswordEncoder encoder;
 
-  @GetMapping("/{cro}")
-  public Dentist dentist(@PathVariable("cro") String cro) {
+  @GetMapping("/{user}")
+  public User user(@PathVariable("user") String user) {
 
-    Optional<Dentist> dentistFind = dentistRepository.findById(cro);
+    Optional<User> dentistFind = userRepository.findById(user);
 
     if (dentistFind.isPresent()) {
       return dentistFind.get();
@@ -39,39 +39,43 @@ public class DentistController {
     return null;
   }
 
-  
   @GetMapping("/list")
-  public List<Dentist> dentists() {
-    return this.dentistRepository.findAll();
+  public List<User> dentists() {
+    return this.userRepository.findAll();
   }
   
+  @GetMapping("/list/document/{document}")
+  public List<User> findByDocument(@PathVariable("document") String document) {
+    return this.userRepository.findByDocument(document);
+  }
+
   @GetMapping("/list/name/{name}")
-  public List<Dentist> findByTitle(@PathVariable("name") String name) {
-    return this.dentistRepository.findByNameIgnoreCase(name);
+  public List<User> findByName(@PathVariable("name") String name) {
+    return this.userRepository.findByNameIgnoreCase(name);
   }
 
   @GetMapping("/list/status/{status}")
-  public List<Dentist> listMoreThan(@PathVariable("status") Boolean status) {
-    return this.dentistRepository.findAllByStatus(status);
+  public List<User> listByStatus(@PathVariable("status") Boolean status) {
+    return this.userRepository.findAllByStatus(status);
   }
 
   @GetMapping("/validarSenha")
-  public ResponseEntity<Boolean> login(@RequestBody Dentist dentist) {
-    Optional<Dentist> optDentist = dentistRepository.findById(dentist.getCro());
+  public ResponseEntity<Boolean> login(@RequestBody User user) {
+    Optional<User> optDentist = userRepository.findById(user.getUserId());
     if(!optDentist.isPresent()){
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
 
-    Dentist _dentist = optDentist.get();
-    boolean valid = encoder.matches(dentist.getPassword(), _dentist.getPassword());
+    User _dentist = optDentist.get();
+    boolean valid = encoder.matches(user.getPassword(), _dentist.getPassword());
 
     HttpStatus status = (valid) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
     return ResponseEntity.status(status).body(valid);
   }
 
   @PostMapping("/")
-  public Dentist dentist(@RequestBody Dentist dentist) {
+  public User dentist(@RequestBody User dentist) {
     dentist.setPassword(encoder.encode(dentist.getPassword()));
-    return this.dentistRepository.save(dentist);
+    return this.userRepository.save(dentist);
   }
 }

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.entities.Procedure;
+import br.com.springboot.tgs.models.Procedure;
 
 public interface ProcedureRepository extends JpaRepository<Procedure, Integer> {
   public List<Procedure> findByIdGreaterThan(Integer id);
