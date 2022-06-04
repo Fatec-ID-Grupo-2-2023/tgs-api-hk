@@ -149,7 +149,7 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @PostMapping("/")
-    public ResponseEntity<Object> scheduleAppointment(@RequestBody ConsultPlain consultPlain) {
+    public ResponseEntity<HttpStatus> scheduleAppointment(@RequestBody ConsultPlain consultPlain) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             LocalDateTime currentDateTime = LocalDateTime
@@ -159,7 +159,7 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
                     currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), true);
 
             createAndUpdate(consult);
-            return ResponseEntity.status(HttpStatus.OK).body(consult);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -179,10 +179,32 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
             LOGGER.warn("Create consult - " + consult.getId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
             LOGGER.error("Create consult fail - ", e);
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Create consult fail - " + e);
+        }
+    }
+
+    /**
+     * 
+     * @param consult - Recebe uma consulta para ser cancelada
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/remove")
+    public ResponseEntity<HttpStatus> removeAppointment(@RequestBody ConsultPlain consultPlain) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime currentDateTime = LocalDateTime
+                    .parse(consultPlain.getDate().toString() + " " + consultPlain.getHour().toString(), formatter);
+
+            Consult consult = new Consult(consultPlain.getId(), consultPlain.getPatient(), consultPlain.getDentist(),
+                    currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), consultPlain.getStatus());
+
+            remove(consult);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
@@ -192,21 +214,26 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
-    @PostMapping("/remove")
-    public ResponseEntity<Object> remove(@RequestBody Consult consult) {
-        try {
-            consult.setPatient(null);
-            consult.setProcedure(null);
+    public ResponseEntity<Object> remove(Consult consult) {
+        try {                    
+            if(consult.getStatus() == true){
+                consult.setPatient(null);
+                consult.setProcedure(null);
+                consult.setStatus(false);
 
-            this.consultRepository.save(consult);
+                this.consultRepository.save(consult);
+            } else {
+                this.consultRepository.delete(consult);
+            }
+
 
             LOGGER.warn("Remove consult - " + consult.getId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.error("Remove consult fail - ", e.getMessage());
+            LOGGER.error("Remove consult fail - ", e);
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Remove consult fail - " + e);
         }
     }
 }
