@@ -53,6 +53,13 @@ public class Consult {
 
     private Boolean status;
 
+    public Consult(User dentist, LocalDateTime dateTime, User employee, Boolean status) {
+        this.dentist = dentist;
+        this.dateTime = dateTime;
+        this.employee = employee;
+        this.status = status;
+    }
+
     // ID
     public Integer getId() {
         return id;

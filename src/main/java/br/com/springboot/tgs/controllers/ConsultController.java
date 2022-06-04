@@ -1,5 +1,8 @@
 package br.com.springboot.tgs.controllers;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Consult;
 import br.com.springboot.tgs.entities.LineChart;
+import br.com.springboot.tgs.entities.Schedule;
 import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
@@ -68,19 +72,64 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
     /**
      * Buscar dados para o grafico de linhas
+     * 
      * @return - os dados
      */
     @GetMapping("/chart/line")
     public ResponseEntity<Object> getChartLine() {
         try {
-            String[] labels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-            int[] data = {0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000};
+            String[] labels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+            int[] data = { 0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000 };
             LineChart lc = new LineChart(labels, data);
             return ResponseEntity.status(HttpStatus.OK).body(lc);
         } catch (Exception e) {
             LOGGER.info("Unable to create the line chart");
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    /**
+     * 
+     * @param schedule - Recebe os dados para abrir agenda
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/schedule/open")
+    public ResponseEntity<HttpStatus> scheduleOpen(@RequestBody Schedule schedule) {
+        try {           
+            while(!schedule.getStartDate().isAfter(schedule.getFinalDate())){
+                LocalTime currentWorkTime = schedule.getStartWorkHour();
+
+                while(!currentWorkTime.isAfter(schedule.getStartLunchHour().minusHours(schedule.getConsultDuration().getHour()).minusMinutes(schedule.getConsultDuration().getMinute()))){
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    LocalDateTime currentDateTime = LocalDateTime.parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+                    
+                    Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
+                                        
+                    createAndUpdate(consult);
+
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour()).plusMinutes(schedule.getConsultDuration().getMinute());
+                }
+                
+                currentWorkTime = schedule.getFinalLunchHour();
+
+                while(!currentWorkTime.isAfter(schedule.getFinalWorkHour().minusHours(schedule.getConsultDuration().getHour()).minusMinutes(schedule.getConsultDuration().getMinute()))){
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    LocalDateTime currentDateTime = LocalDateTime.parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+                    
+                    Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
+                                        
+                    createAndUpdate(consult);
+
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour()).plusMinutes(schedule.getConsultDuration().getMinute());
+                }
+
+                schedule.setStartDate(schedule.getStartDate().plusDays(1));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     /**
