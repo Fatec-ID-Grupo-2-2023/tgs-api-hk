@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +51,12 @@ public class ProcedureController {
   }
 
   @PostMapping("/")
-  public Procedure procedure(@RequestBody Procedure procedure) {
-    return this.procedureRepository.save(procedure);
+  public ResponseEntity<HttpStatus> procedure(@RequestBody Procedure procedure) {
+    try {
+      this.procedureRepository.save(procedure);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    }
   }
 }

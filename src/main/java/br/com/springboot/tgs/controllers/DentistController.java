@@ -74,8 +74,13 @@ public class DentistController {
   }
 
   @PostMapping("/")
-  public User dentist(@RequestBody User dentist) {
-    dentist.setPassword(encoder.encode(dentist.getPassword()));
-    return this.userRepository.save(dentist);
+  public ResponseEntity<HttpStatus> dentist(@RequestBody User dentist) {    
+    try {
+      dentist.setPassword(encoder.encode(dentist.getPassword()));
+      this.userRepository.save(dentist);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);        
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    }
   }
 }
