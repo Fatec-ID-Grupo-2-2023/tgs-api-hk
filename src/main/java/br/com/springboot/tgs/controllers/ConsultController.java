@@ -89,6 +89,24 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
     }
 
     /**
+     * Buscar dados para o grafico de pizza
+     * 
+     * @return - os dados
+     */
+    @GetMapping("/chart/pie")
+    public ResponseEntity<Object> getChartPie() {
+        try {
+            List<Object> pieChartData = this.consultRepository.findPieChartData();
+
+            return ResponseEntity.status(HttpStatus.OK).body(pieChartData);
+        } catch (Exception e) {
+            LOGGER.info("Unable to create the pie chart");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    }
+    
+
+    /**
      * 
      * @param schedule - Recebe os dados para abrir agenda
      * @return - Retorna uma mensagem de sucesso ou erro
