@@ -1,5 +1,8 @@
 package br.com.springboot.tgs.controllers;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import br.com.springboot.tgs.entities.Consult;
+import br.com.springboot.tgs.entities.ConsultPlain;
 import br.com.springboot.tgs.entities.LineChart;
-import br.com.springboot.tgs.models.RestControllerModel;
+import br.com.springboot.tgs.entities.Schedule;
+import br.com.springboot.tgs.entities.models.Consult;
+import br.com.springboot.tgs.interfaces.RestControllerModel;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
 @RestController
@@ -68,13 +74,14 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
     /**
      * Buscar dados para o grafico de linhas
+     * 
      * @return - os dados
      */
     @GetMapping("/chart/line")
     public ResponseEntity<Object> getChartLine() {
         try {
-            String[] labels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-            int[] data = {0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000};
+            String[] labels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+            int[] data = { 0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000 };
             LineChart lc = new LineChart(labels, data);
             return ResponseEntity.status(HttpStatus.OK).body(lc);
         } catch (Exception e) {
@@ -85,12 +92,86 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
     /**
      * 
+     * @param schedule - Recebe os dados para abrir agenda
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/schedule/open")
+    public ResponseEntity<Object> scheduleOpen(@RequestBody Schedule schedule) {
+        try {
+            Consult test = null;
+            while (!schedule.getStartDate().isAfter(schedule.getFinalDate())) {
+                LocalTime currentWorkTime = schedule.getStartWorkHour();
+
+                while (!currentWorkTime
+                        .isAfter(schedule.getStartLunchHour().minusHours(schedule.getConsultDuration().getHour())
+                                .minusMinutes(schedule.getConsultDuration().getMinute()))) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    LocalDateTime currentDateTime = LocalDateTime
+                            .parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+
+                    Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
+
+                    createAndUpdate(consult);
+
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour())
+                            .plusMinutes(schedule.getConsultDuration().getMinute());
+                }
+
+                currentWorkTime = schedule.getFinalLunchHour();
+
+                while (!currentWorkTime
+                        .isAfter(schedule.getFinalWorkHour().minusHours(schedule.getConsultDuration().getHour())
+                                .minusMinutes(schedule.getConsultDuration().getMinute()))) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    LocalDateTime currentDateTime = LocalDateTime
+                            .parse(schedule.getStartDate().toString() + " " + currentWorkTime.toString(), formatter);
+
+                    Consult consult = new Consult(schedule.getDentist(), currentDateTime, schedule.getEmployee(), true);
+                    test = consult;
+                    createAndUpdate(consult);
+
+                    currentWorkTime = currentWorkTime.plusHours(schedule.getConsultDuration().getHour())
+                            .plusMinutes(schedule.getConsultDuration().getMinute());
+                }
+
+                schedule.setStartDate(schedule.getStartDate().plusDays(1));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(test);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    /**
+     * 
+     * @param consultPlain - Recebe uma consulta para ser agendada
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/")
+    public ResponseEntity<HttpStatus> scheduleAppointment(@RequestBody ConsultPlain consultPlain) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime currentDateTime = LocalDateTime
+                    .parse(consultPlain.getDate().toString() + " " + consultPlain.getHour().toString(), formatter);
+
+            Consult consult = new Consult(consultPlain.getId(), consultPlain.getPatient(), consultPlain.getDentist(),
+                    currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), true);
+
+            createAndUpdate(consult);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    /**
+     * 
      * @param consult - Recebe uma consulta para cadastrar ou atualizar no banco
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
-    @PostMapping("/")
-    public ResponseEntity<Object> createAndUpdate(@RequestBody Consult consult) {
+    public ResponseEntity<Object> createAndUpdate(Consult consult) {
         try {
             consult.setStatus(true);
 
@@ -98,13 +179,32 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
 
             LOGGER.warn("Create consult - " + consult.getId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.error("Create consult fail - ", e.getMessage());
+            LOGGER.error("Create consult fail - ", e);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Create consult fail - " + e);
+        }
+    }
 
-            // return
-            // ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(consult);
+    /**
+     * 
+     * @param consult - Recebe uma consulta para ser cancelada
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
+    @PostMapping("/remove")
+    public ResponseEntity<HttpStatus> removeAppointment(@RequestBody ConsultPlain consultPlain) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime currentDateTime = LocalDateTime
+                    .parse(consultPlain.getDate().toString() + " " + consultPlain.getHour().toString(), formatter);
+
+            Consult consult = new Consult(consultPlain.getId(), consultPlain.getPatient(), consultPlain.getDentist(),
+                    currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), consultPlain.getStatus());
+
+            remove(consult);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
@@ -114,21 +214,26 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
-    @PostMapping("/remove")
-    public ResponseEntity<Object> remove(@RequestBody Consult consult) {
-        try {
-            consult.setPatient(null);
-            consult.setProcedure(null);
+    public ResponseEntity<Object> remove(Consult consult) {
+        try {                    
+            if(consult.getStatus() == true){
+                consult.setPatient(null);
+                consult.setProcedure(null);
+                consult.setStatus(false);
 
-            this.consultRepository.save(consult);
+                this.consultRepository.save(consult);
+            } else {
+                this.consultRepository.delete(consult);
+            }
+
 
             LOGGER.warn("Remove consult - " + consult.getId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.error("Remove consult fail - ", e.getMessage());
+            LOGGER.error("Remove consult fail - ", e);
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Remove consult fail - " + e);
         }
     }
 }

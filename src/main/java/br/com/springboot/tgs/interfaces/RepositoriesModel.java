@@ -1,4 +1,4 @@
-package br.com.springboot.tgs.models;
+package br.com.springboot.tgs.interfaces;
 
 import java.util.List;
 
