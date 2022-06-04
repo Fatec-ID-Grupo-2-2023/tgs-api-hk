@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.springboot.tgs.entities.Consult;
+import br.com.springboot.tgs.models.RepositoriesModel;
 
-public interface ConsultRepository extends JpaRepository<Consult, Integer> {  
+public interface ConsultRepository extends RepositoriesModel<Consult>, JpaRepository<Consult, Integer>{  
   /**
    * 
    * @param status - Recebe o status por parametro

@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.springboot.tgs.entities.Procedure;
+import br.com.springboot.tgs.models.RepositoriesModel;
 
-public interface ProcedureRepository extends JpaRepository<Procedure, Integer> {
+public interface ProcedureRepository extends RepositoriesModel<Procedure>, JpaRepository<Procedure, Integer> {
   /**
    * 
    * @param status - Recebe o status por parametro

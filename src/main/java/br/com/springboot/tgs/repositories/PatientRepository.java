@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.springboot.tgs.entities.Patient;
+import br.com.springboot.tgs.models.RepositoriesModel;
 
-public interface PatientRepository extends JpaRepository<Patient, String> {
+public interface PatientRepository extends RepositoriesModel<Patient>, JpaRepository<Patient, String> {
   /**
    * 
    * @param status - Recebe o status por parametro
