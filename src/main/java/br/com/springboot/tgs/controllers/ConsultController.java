@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.springboot.tgs.models.Consult;
+import br.com.springboot.tgs.entities.Consult;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
 @RestController
@@ -88,13 +88,14 @@ public class ConsultController {
 
     /**
      * 
-     * @param consult - Recebe uma consulta para remover do banco
+     * @param consult - Recebe a consulta a ser removida do banco
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Consult consult) {
         try {
-            consult.setStatus(false);
+            consult.setPatient(null);
+            consult.setProcedure(null);
 
             this.consultRepository.save(consult);
 

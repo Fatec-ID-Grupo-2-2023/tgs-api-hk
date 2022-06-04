@@ -1,4 +1,4 @@
-package br.com.springboot.tgs.models;
+package br.com.springboot.tgs.entities;
 
 import java.time.LocalDateTime;
 

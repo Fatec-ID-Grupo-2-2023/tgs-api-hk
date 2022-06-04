@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.models.User;
+import br.com.springboot.tgs.entities.User;
 
 public interface UserRepository extends JpaRepository<User, String> { 
   /**

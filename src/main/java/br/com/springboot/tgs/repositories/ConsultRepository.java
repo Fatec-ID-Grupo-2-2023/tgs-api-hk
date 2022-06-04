@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.models.Consult;
+import br.com.springboot.tgs.entities.Consult;
 
 public interface ConsultRepository extends JpaRepository<Consult, Integer> {  
   /**

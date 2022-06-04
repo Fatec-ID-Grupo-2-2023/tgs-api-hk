@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.models.Patient;
+import br.com.springboot.tgs.entities.Patient;
 
 public interface PatientRepository extends JpaRepository<Patient, String> {
   /**
