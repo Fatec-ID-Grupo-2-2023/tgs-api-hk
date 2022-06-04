@@ -63,7 +63,7 @@ public class DentistController {
     }
   }
 
-  @PostMapping("/")
+  @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody User dentist) {
     try {
       dentist.setStatus(false);

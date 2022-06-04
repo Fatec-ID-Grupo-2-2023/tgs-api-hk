@@ -55,7 +55,7 @@ public class ProcedureController {
     }
   }
 
-  @PostMapping("/")
+  @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody Procedure procedure) {
     try {
       procedure.setStatus(false);

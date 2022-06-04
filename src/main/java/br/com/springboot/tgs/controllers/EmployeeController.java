@@ -64,7 +64,7 @@ public class EmployeeController {
     }
   }
 
-  @PostMapping("/")
+  @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody User employee) {
     try {
       employee.setStatus(false);

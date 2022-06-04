@@ -56,7 +56,7 @@ public class PatientController {
     }
   }
   
-  @PostMapping("/")
+  @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody Patient patient) {
     try {
       patient.setStatus(false);
