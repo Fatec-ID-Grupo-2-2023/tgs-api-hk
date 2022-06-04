@@ -1,9 +1,17 @@
 package br.com.springboot.tgs.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "cpf")
 @Table(name = "patients")
 public class Patient {
     @Id
@@ -58,9 +67,12 @@ public class Patient {
 
     @Column(nullable = false)
     private Integer number;
-    
+
     private String complement;
     private Boolean status;
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consult> consults = new ArrayList<>();
 
     // CPF
     public String getCpf() {
@@ -231,5 +243,14 @@ public class Patient {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    // CONSULTS
+    public List<Consult> getConsults() {
+        return consults;
+    }
+
+    public void setConsults(List<Consult> consults) {
+        this.consults = consults;
     }
 }

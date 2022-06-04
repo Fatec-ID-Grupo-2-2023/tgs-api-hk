@@ -1,11 +1,18 @@
 package br.com.springboot.tgs.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,27 +26,28 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Table(name = "users")
 public class User {
 
     @Id
     private String userId;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String document;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String surname;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String email;
 
     private String telephone;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private String cellphone;
     private String expertise;
     private Boolean status;
@@ -47,8 +55,10 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @OneToMany(mappedBy = "dentist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consult> consults = new ArrayList<>();
 
-    //USER ID
+    // USER ID
     public String getUserId() {
         return userId;
     }
@@ -57,7 +67,7 @@ public class User {
         this.userId = userId;
     }
 
-    //DOCUMENT (CRO || CPF)
+    // DOCUMENT (CRO || CPF)
     public String getDocument() {
         return document;
     }
@@ -84,7 +94,7 @@ public class User {
         this.surname = surname;
     }
 
-    //EMAIL
+    // EMAIL
     public String getEmail() {
         return email;
     }
@@ -93,7 +103,7 @@ public class User {
         this.email = email;
     }
 
-    //TELEPHONE
+    // TELEPHONE
     public String getTelephone() {
         return telephone;
     }
@@ -102,7 +112,7 @@ public class User {
         this.telephone = telephone;
     }
 
-    //CELLPHONE
+    // CELLPHONE
     public String getCellphone() {
         return cellphone;
     }
@@ -129,12 +139,21 @@ public class User {
         this.status = status;
     }
 
-    //PASSWORD
+    // PASSWORD
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    //
+    public List<Consult> getConsults() {
+        return consults;
+    }
+
+    public void setConsults(List<Consult> consults) {
+        this.consults = consults;
     }
 }
