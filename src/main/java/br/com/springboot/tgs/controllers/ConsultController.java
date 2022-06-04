@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.springboot.tgs.entities.ConsultPlain;
-import br.com.springboot.tgs.entities.LineChart;
 import br.com.springboot.tgs.entities.Schedule;
 import br.com.springboot.tgs.entities.models.Consult;
 import br.com.springboot.tgs.interfaces.RestControllerModel;
@@ -80,10 +79,9 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
     @GetMapping("/chart/line")
     public ResponseEntity<Object> getChartLine() {
         try {
-            String[] labels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-            int[] data = { 0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000 };
-            LineChart lc = new LineChart(labels, data);
-            return ResponseEntity.status(HttpStatus.OK).body(lc);
+            List<Object> lineChartData = this.consultRepository.findLineChartData();
+
+            return ResponseEntity.status(HttpStatus.OK).body(lineChartData);
         } catch (Exception e) {
             LOGGER.info("Unable to create the line chart");
         }
