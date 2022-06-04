@@ -20,6 +20,7 @@ import br.com.springboot.tgs.repositories.UserRepository;
 @RestController
 @RequestMapping("/employees") 
 public class EmployeeController {
+  private final String PREFIX_EMPLOYEE_USER_ID = "EPL";
 
   @Autowired
   private UserRepository userRepository;
@@ -28,57 +29,47 @@ public class EmployeeController {
   private PasswordEncoder encoder;
 
   @GetMapping("/{user}")
-  public User user(@PathVariable("user") String user) {
+  public Object findByUser(@PathVariable("user") String user) {
 
     Optional<User> employeeFind = userRepository.findById(user);
 
     if (employeeFind.isPresent()) {
-      return employeeFind.get();
+      return ResponseEntity.status(HttpStatus.OK).body(employeeFind.get());      
     }
 
-    return null;
-  }
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+  }      
 
   @GetMapping("/list")
   public List<User> employees() {
-    return this.userRepository.findAll();
-  }
-  
-  @GetMapping("/list/document/{document}")
-  public List<User> findByDocument(@PathVariable("document") String document) {
-    return this.userRepository.findByDocument(document);
+    return this.userRepository.findAllByStatus(true);
   }
 
-  @GetMapping("/list/name/{name}")
-  public List<User> findByName(@PathVariable("name") String name) {
-    return this.userRepository.findByNameIgnoreCase(name);
-  }
-
-  @GetMapping("/list/status/{status}")
+  @GetMapping("/list/{status}")
   public List<User> listByStatus(@PathVariable("status") Boolean status) {
     return this.userRepository.findAllByStatus(status);
   }
 
-  @GetMapping("/validarSenha")
-  public ResponseEntity<Boolean> login(@RequestBody User user) {
-    Optional<User> optEmployee = userRepository.findById(user.getUserId());
-    if(!optEmployee.isPresent()){
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+  @PostMapping("/")
+  public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody User employee) {
+    try {
+      employee.setUserId(PREFIX_EMPLOYEE_USER_ID + employee.getDocument());
+      employee.setPassword(encoder.encode(employee.getPassword()));
+      employee.setStatus(true);
+      
+      this.userRepository.save(employee);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);        
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
-
-    User _employee = optEmployee.get();
-    boolean valid = encoder.matches(user.getPassword(), _employee.getPassword());
-
-    HttpStatus status = (valid) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-    return ResponseEntity.status(status).body(valid);
   }
 
   @PostMapping("/")
-  public ResponseEntity<HttpStatus> employee(@RequestBody User employee) {
+  public ResponseEntity<HttpStatus> remove(@RequestBody User employee) {
     try {
-      employee.setPassword(encoder.encode(employee.getPassword()));
+      employee.setStatus(false);
       this.userRepository.save(employee);
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);        
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
