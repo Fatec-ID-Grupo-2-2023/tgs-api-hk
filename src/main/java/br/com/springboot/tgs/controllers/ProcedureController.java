@@ -12,16 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Procedure;
-import br.com.springboot.tgs.repository.ProcedureRepository;
+import br.com.springboot.tgs.repositories.ProcedureRepository;
 
 @RestController
 @RequestMapping("/procedures")
 public class ProcedureController {
-  // GET
-  // POST
-  // PUT
-  // DELETE
-  // PATCH
 
   @Autowired
   private ProcedureRepository procedureRepository;
