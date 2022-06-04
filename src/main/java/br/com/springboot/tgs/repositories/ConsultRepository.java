@@ -9,6 +9,11 @@ import org.springframework.data.repository.query.Param;
 import br.com.springboot.tgs.models.Consult;
 
 public interface ConsultRepository extends JpaRepository<Consult, Integer> {  
+  /**
+   * 
+   * @param status - Recebe o status por parametro
+   * @return - Retorna a lista de consultas referentes ao status recebido
+   */
   @Query("SELECT u from Consult u where u.status = :status")
   public List<Consult> findAllByStatus(@Param("status") Boolean status);
 }

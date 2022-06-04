@@ -28,6 +28,11 @@ public class ConsultController {
     @Autowired
     private ConsultRepository consultRepository;
 
+    /**
+     * 
+     * @param id - Recebe o id da consulta por parametro
+     * @return - Retorna as informações da consulta correspondente
+     */
     @GetMapping("/{id}")
     public Object findById(@PathVariable("id") Integer id) {
         try {
@@ -38,13 +43,18 @@ public class ConsultController {
 
                 return ResponseEntity.status(HttpStatus.OK).body(consultFind.get());
             }
-        } catch (Exception e) {            
+        } catch (Exception e) {
             LOGGER.info("Consult - " + id + " not found");
         }
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
+    /**
+     * 
+     * @param status - Recebe o status da consulta
+     * @return - Busca a lista de consultas referentes ao status recebido
+     */
     @GetMapping("/list/{status}")
     public List<Consult> findByStatus(@PathVariable("status") Boolean status) {
         LOGGER.info("Search consults by status - " + status);
@@ -52,6 +62,11 @@ public class ConsultController {
         return this.consultRepository.findAllByStatus(status);
     }
 
+    /**
+     * 
+     * @param consult - Recebe uma consulta para cadastrar ou atualizar no banco
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
     @PostMapping("/")
     public ResponseEntity<Object> createAndUpdate(@RequestBody Consult consult) {
         try {
@@ -65,11 +80,17 @@ public class ConsultController {
         } catch (Exception e) {
             LOGGER.error("Create consult fail - ", e.getMessage());
 
-            // return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
+            // return
+            // ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(consult);
         }
     }
 
+    /**
+     * 
+     * @param consult - Recebe uma consulta para remover do banco
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Consult consult) {
         try {

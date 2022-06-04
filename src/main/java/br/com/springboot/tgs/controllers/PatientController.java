@@ -26,6 +26,11 @@ public class PatientController {
   @Autowired
   private PatientRepository patientRepository;
 
+  /**
+   * 
+   * @param cpf - Recebe o cpf do paciente por parametro
+   * @return - Retorna as informações do paciente correspondente
+   */
   @GetMapping("/{cpf}")
   public Object findByCpf(@PathVariable("cpf") String cpf) {
     try {
@@ -43,6 +48,11 @@ public class PatientController {
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
   }
 
+  /**
+   * 
+   * @param status - Recebe o status do paciente
+   * @return - Busca a lista de pacientes referentes ao status recebido
+   */
   @GetMapping("/list/{status}")
   public List<Patient> findByStatus(@PathVariable("status") Boolean status) {
     LOGGER.info("Search patients by status - " + status);
@@ -50,6 +60,11 @@ public class PatientController {
     return this.patientRepository.findAllByStatus(status);
   }
 
+  /**
+   * 
+   * @param patient - Recebe um pacientes para cadastrar ou atualizar no banco
+   * @return - Retorna uma mensagem de sucesso ou erro
+   */
   @PostMapping("/")
   public ResponseEntity<Object> createAndUpdate(@RequestBody Patient patient) {
     try {
@@ -67,6 +82,11 @@ public class PatientController {
     }
   }
 
+  /**
+   * 
+   * @param patient - Recebe um pacientes para remover do banco
+   * @return - Retorna uma mensagem de sucesso ou erro 
+   */
   @PostMapping("/remove")
   public ResponseEntity<Object> remove(@RequestBody Patient patient) {
     try {

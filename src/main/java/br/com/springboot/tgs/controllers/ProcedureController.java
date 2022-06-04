@@ -28,6 +28,11 @@ public class ProcedureController {
     @Autowired
     private ProcedureRepository procedureRepository;
 
+    /**
+     * 
+     * @param id - Recebe o id do procedimento por parametro
+     * @return - Retorna as informações do procedimento correspondente
+     */
     @GetMapping("/{id}")
     public Object findById(@PathVariable("id") Integer id) {
         try {
@@ -45,6 +50,11 @@ public class ProcedureController {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
+    /**
+     * 
+     * @param status - Recebe o status do procedimento
+     * @return - Busca a lista de procedimentos referentes ao status recebido
+     */
     @GetMapping("/list/{status}")
     public List<Procedure> findByStatus(@PathVariable("status") Boolean status) {
         LOGGER.info("Search procedures by status - " + status);
@@ -52,6 +62,11 @@ public class ProcedureController {
         return this.procedureRepository.findAllByStatus(status);
     }
 
+    /**
+     * 
+     * @param procedure - Recebe um procedimento para cadastrar ou atualizar no banco
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
     @PostMapping("/")
     public ResponseEntity<Object> createAndUpdate(@RequestBody Procedure procedure) {
         try {
@@ -69,6 +84,11 @@ public class ProcedureController {
         }
     }
 
+    /**
+     * 
+     * @param procedure - Recebe um procedimento para remover do banco
+     * @return - Retorna uma mensagem de sucesso ou erro 
+     */
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Procedure procedure) {
         try {

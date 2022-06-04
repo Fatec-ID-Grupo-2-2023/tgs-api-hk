@@ -32,6 +32,11 @@ public class EmployeeController {
   @Autowired
   private PasswordEncoder encoder;
 
+  /**
+   * 
+   * @param user - Recebe o usuario do funcionario por parametro
+   * @return - Retorna as informações do funcionario correspondente
+   */
   @GetMapping("/{user}")
   public Object findByUser(@PathVariable("user") String user) {
     try {
@@ -49,6 +54,11 @@ public class EmployeeController {
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
   }
 
+  /**
+   * 
+   * @param status - Recebe o status do funcionario
+   * @return - Busca a lista de funcionarios referentes ao status recebido
+   */
   @GetMapping("/list/{status}")
   public List<User> listByStatus(@PathVariable("status") Boolean status) {
     LOGGER.info("Search employees by status - " + status);
@@ -56,6 +66,11 @@ public class EmployeeController {
     return this.userRepository.findAllByStatus(status, PREFIX_EMPLOYEE_USER_ID);
   }
 
+  /**
+   * 
+   * @param employee - Recebe um funcionario para cadastrar ou atualizar no banco
+   * @return - Retorna uma mensagem de sucesso ou erro
+   */
   @PostMapping("/")
   public ResponseEntity<Object> createAndUpdate(@RequestBody User employee) {
     try {
@@ -75,6 +90,11 @@ public class EmployeeController {
     }
   }
 
+  /**
+   * 
+   * @param employee - Recebe um funcionario para remover do banco
+   * @return - Retorna uma mensagem de sucesso ou erro 
+   */
   @PostMapping("/remove")
   public ResponseEntity<Object> remove(@RequestBody User employee) {
     try {
