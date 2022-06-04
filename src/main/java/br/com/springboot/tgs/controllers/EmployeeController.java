@@ -42,12 +42,12 @@ public class EmployeeController {
 
   @GetMapping("/list")
   public List<User> employees() {
-    return this.userRepository.findAllByStatus(true);
+    return this.userRepository.findAllByStatus(true, PREFIX_EMPLOYEE_USER_ID);
   }
 
   @GetMapping("/list/{status}")
   public List<User> listByStatus(@PathVariable("status") Boolean status) {
-    return this.userRepository.findAllByStatus(status);
+    return this.userRepository.findAllByStatus(status, PREFIX_EMPLOYEE_USER_ID);
   }
 
   @PostMapping("/")
