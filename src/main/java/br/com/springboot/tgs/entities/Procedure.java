@@ -27,14 +27,12 @@ public class Procedure {
   private String description;
   private Boolean status;
 
+  // ID
   public Integer getId() {
     return id;
   }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
+  // TITLE
   public String getTitle() {
     return title;
   }
@@ -43,6 +41,7 @@ public class Procedure {
     this.title = title;
   }
 
+  // DESCRIPTION
   public String getDescription() {
     return description;
   }
@@ -51,6 +50,7 @@ public class Procedure {
     this.description = description;
   }
 
+  // STATUS
   public Boolean getStatus() {
     return status;
   }
