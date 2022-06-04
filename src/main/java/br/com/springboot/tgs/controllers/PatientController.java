@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Patient;
+import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.PatientRepository;
 
 @RestController
 @RequestMapping("/patients")
-public class PatientController {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
+public class PatientController implements RestControllerModel<Patient, String>{
+  private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
 
   @Autowired
   private PatientRepository patientRepository;
@@ -31,8 +32,9 @@ public class PatientController {
    * @param cpf - Recebe o cpf do paciente por parametro
    * @return - Retorna as informações do paciente correspondente
    */
+  @Override
   @GetMapping("/{cpf}")
-  public Object findByCpf(@PathVariable("cpf") String cpf) {
+  public ResponseEntity<Object> findById(@PathVariable("cpf") String cpf) {
     try {
       Optional<Patient> patientFind = patientRepository.findById(cpf);
 
@@ -53,6 +55,7 @@ public class PatientController {
    * @param status - Recebe o status do paciente
    * @return - Busca a lista de pacientes referentes ao status recebido
    */
+  @Override
   @GetMapping("/list/{status}")
   public List<Patient> findByStatus(@PathVariable("status") Boolean status) {
     LOGGER.info("Search patients by status - " + status);
@@ -65,6 +68,7 @@ public class PatientController {
    * @param patient - Recebe um pacientes para cadastrar ou atualizar no banco
    * @return - Retorna uma mensagem de sucesso ou erro
    */
+  @Override
   @PostMapping("/")
   public ResponseEntity<Object> createAndUpdate(@RequestBody Patient patient) {
     try {
@@ -87,6 +91,7 @@ public class PatientController {
    * @param patient - Recebe um pacientes para remover do banco
    * @return - Retorna uma mensagem de sucesso ou erro 
    */
+  @Override
   @PostMapping("/remove")
   public ResponseEntity<Object> remove(@RequestBody Patient patient) {
     try {

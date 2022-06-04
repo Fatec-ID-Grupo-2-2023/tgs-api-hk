@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.User;
+import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/employees")
-public class EmployeeController {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
+public class EmployeeController implements RestControllerModel<User, String>{
+  private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeController.class);
 
   private final String PREFIX_EMPLOYEE_USER_ID = "EPL";
 
@@ -37,8 +38,9 @@ public class EmployeeController {
    * @param user - Recebe o usuario do funcionario por parametro
    * @return - Retorna as informações do funcionario correspondente
    */
+  @Override
   @GetMapping("/{user}")
-  public Object findByUser(@PathVariable("user") String user) {
+  public ResponseEntity<Object> findById(@PathVariable("user") String user) {
     try {
       Optional<User> employeeFind = userRepository.findById(user);
 
@@ -59,8 +61,9 @@ public class EmployeeController {
    * @param status - Recebe o status do funcionario
    * @return - Busca a lista de funcionarios referentes ao status recebido
    */
+  @Override
   @GetMapping("/list/{status}")
-  public List<User> listByStatus(@PathVariable("status") Boolean status) {
+  public List<User> findByStatus(@PathVariable("status") Boolean status) {
     LOGGER.info("Search employees by status - " + status);
 
     return this.userRepository.findAllByStatus(status, PREFIX_EMPLOYEE_USER_ID);
@@ -71,6 +74,7 @@ public class EmployeeController {
    * @param employee - Recebe um funcionario para cadastrar ou atualizar no banco
    * @return - Retorna uma mensagem de sucesso ou erro
    */
+  @Override
   @PostMapping("/")
   public ResponseEntity<Object> createAndUpdate(@RequestBody User employee) {
     try {
@@ -95,6 +99,7 @@ public class EmployeeController {
    * @param employee - Recebe um funcionario para remover do banco
    * @return - Retorna uma mensagem de sucesso ou erro 
    */
+  @Override
   @PostMapping("/remove")
   public ResponseEntity<Object> remove(@RequestBody User employee) {
     try {

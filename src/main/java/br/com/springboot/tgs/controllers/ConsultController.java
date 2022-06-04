@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Consult;
+import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
 @RestController
 @RequestMapping("/consults")
 @CrossOrigin
-public class ConsultController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
+public class ConsultController implements RestControllerModel<Consult, Integer> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsultController.class);
 
     @Autowired
     private ConsultRepository consultRepository;
@@ -33,8 +34,9 @@ public class ConsultController {
      * @param id - Recebe o id da consulta por parametro
      * @return - Retorna as informações da consulta correspondente
      */
+    @Override
     @GetMapping("/{id}")
-    public Object findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try {
             Optional<Consult> consultFind = consultRepository.findById(id);
 
@@ -51,10 +53,11 @@ public class ConsultController {
     }
 
     /**
-     * 
+     *
      * @param status - Recebe o status da consulta
      * @return - Busca a lista de consultas referentes ao status recebido
      */
+    @Override
     @GetMapping("/list/{status}")
     public List<Consult> findByStatus(@PathVariable("status") Boolean status) {
         LOGGER.info("Search consults by status - " + status);
@@ -67,6 +70,7 @@ public class ConsultController {
      * @param consult - Recebe uma consulta para cadastrar ou atualizar no banco
      * @return - Retorna uma mensagem de sucesso ou erro
      */
+    @Override
     @PostMapping("/")
     public ResponseEntity<Object> createAndUpdate(@RequestBody Consult consult) {
         try {
@@ -91,6 +95,7 @@ public class ConsultController {
      * @param consult - Recebe a consulta a ser removida do banco
      * @return - Retorna uma mensagem de sucesso ou erro
      */
+    @Override
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Consult consult) {
         try {

@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Procedure;
+import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.ProcedureRepository;
 
 @RestController
 @RequestMapping("/procedures")
 @CrossOrigin
-public class ProcedureController {
+public class ProcedureController implements RestControllerModel<Procedure, Integer>{
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
 
     @Autowired
@@ -34,7 +35,7 @@ public class ProcedureController {
      * @return - Retorna as informações do procedimento correspondente
      */
     @GetMapping("/{id}")
-    public Object findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try {
             Optional<Procedure> procedureFind = procedureRepository.findById(id);
 
