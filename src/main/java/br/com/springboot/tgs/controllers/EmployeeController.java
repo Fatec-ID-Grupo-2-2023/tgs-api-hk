@@ -18,8 +18,8 @@ import br.com.springboot.tgs.models.User;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @RestController
-@RequestMapping("/dentists") 
-public class DentistController {
+@RequestMapping("/employees") 
+public class EmployeeController {
 
   @Autowired
   private UserRepository userRepository;
@@ -30,17 +30,17 @@ public class DentistController {
   @GetMapping("/{user}")
   public User user(@PathVariable("user") String user) {
 
-    Optional<User> dentistFind = userRepository.findById(user);
+    Optional<User> employeeFind = userRepository.findById(user);
 
-    if (dentistFind.isPresent()) {
-      return dentistFind.get();
+    if (employeeFind.isPresent()) {
+      return employeeFind.get();
     }
 
     return null;
   }
 
   @GetMapping("/list")
-  public List<User> dentists() {
+  public List<User> employees() {
     return this.userRepository.findAll();
   }
   
@@ -61,21 +61,26 @@ public class DentistController {
 
   @GetMapping("/validarSenha")
   public ResponseEntity<Boolean> login(@RequestBody User user) {
-    Optional<User> optDentist = userRepository.findById(user.getUserId());
-    if(!optDentist.isPresent()){
+    Optional<User> optEmployee = userRepository.findById(user.getUserId());
+    if(!optEmployee.isPresent()){
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
     }
 
-    User _dentist = optDentist.get();
-    boolean valid = encoder.matches(user.getPassword(), _dentist.getPassword());
+    User _employee = optEmployee.get();
+    boolean valid = encoder.matches(user.getPassword(), _employee.getPassword());
 
     HttpStatus status = (valid) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
     return ResponseEntity.status(status).body(valid);
   }
 
   @PostMapping("/")
-  public User dentist(@RequestBody User dentist) {
-    dentist.setPassword(encoder.encode(dentist.getPassword()));
-    return this.userRepository.save(dentist);
+  public ResponseEntity<HttpStatus> employee(@RequestBody User employee) {
+    try {
+      employee.setPassword(encoder.encode(employee.getPassword()));
+      this.userRepository.save(employee);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);        
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    }
   }
 }

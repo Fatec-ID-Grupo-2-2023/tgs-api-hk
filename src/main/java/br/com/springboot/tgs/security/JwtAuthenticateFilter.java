@@ -20,7 +20,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.com.springboot.tgs.data.UserDetailData;
-import br.com.springboot.tgs.entities.Dentist;
+import br.com.springboot.tgs.models.User;
 
 public class JwtAuthenticateFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
@@ -35,13 +35,13 @@ public class JwtAuthenticateFilter extends UsernamePasswordAuthenticationFilter 
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         try {
-            Dentist dentist = new ObjectMapper().readValue(request.getInputStream(), Dentist.class);
+            User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
 
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dentist.getCro(),
-                    dentist.getPassword(), new ArrayList<>()));
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserId(),
+                    user.getPassword(), new ArrayList<>()));
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            throw new RuntimeException("Falha ao autenticar o dentista", e);
+            throw new RuntimeException("Falha ao autenticar o usuário", e);
         }
     }
 

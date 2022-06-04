@@ -9,23 +9,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import br.com.springboot.tgs.data.UserDetailData;
-import br.com.springboot.tgs.entities.Dentist;
-import br.com.springboot.tgs.repositories.DentistRepository;
+import br.com.springboot.tgs.models.User;
+import br.com.springboot.tgs.repositories.UserRepository;
 
 @Component
 public class UserDetailService implements UserDetailsService{
     @Autowired
-    private DentistRepository dentistRepository;
+    private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String arg0) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String _user) throws UsernameNotFoundException {
         // TODO Auto-generated method stub
-        Optional<Dentist> dentist = dentistRepository.findById(arg0);
-        if(!dentist.isPresent()){
-            throw new UsernameNotFoundException("Dentista [" + dentist + "] não encontrado");
+        Optional<User> user = userRepository.findById(_user);
+        if(!user.isPresent()){
+            throw new UsernameNotFoundException("Dentista [" + user + "] não encontrado");
         }
 
-        return new UserDetailData(dentist);
+        return new UserDetailData(user);
     }
     
 }
