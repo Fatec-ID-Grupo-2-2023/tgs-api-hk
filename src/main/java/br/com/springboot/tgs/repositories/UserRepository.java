@@ -8,13 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import br.com.springboot.tgs.models.User;
 
-public interface UserRepository extends JpaRepository<User, String> {
-  public List<User> findByUserId(String userId);
-
-  public List<User> findByDocument(String document);
-
-  public List<User> findByNameIgnoreCase(String name);
-  
-  @Query("SELECT u from User u where u.status = :status")
-  public List<User> findAllByStatus(@Param("status") Boolean status);
+public interface UserRepository extends JpaRepository<User, String> {    
+  @Query("SELECT u from User u where u.status = :status and u.userId like :prefixId%")
+  public List<User> findAllByStatus(@Param("status") Boolean status, @Param("prefixId") String prefixId);
 }

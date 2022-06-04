@@ -9,10 +9,6 @@ import org.springframework.data.repository.query.Param;
 import br.com.springboot.tgs.models.Procedure;
 
 public interface ProcedureRepository extends JpaRepository<Procedure, Integer> {
-  public List<Procedure> findByIdGreaterThan(Integer id);
-  
-  public List<Procedure> findByTitleIgnoreCase(String title);
-
   @Query("SELECT u from Procedure u where u.id > :id")
   public List<Procedure> findAllMoreThan(@Param("id") Integer id);
 

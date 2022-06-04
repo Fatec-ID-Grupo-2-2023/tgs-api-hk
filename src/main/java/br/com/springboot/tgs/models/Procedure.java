@@ -1,5 +1,6 @@
 package br.com.springboot.tgs.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Procedure {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
+  @Column(nullable = false, unique = true)
   private String title;
   private String description;
   private Boolean status;

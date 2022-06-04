@@ -1,5 +1,6 @@
 package br.com.springboot.tgs.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,11 +25,21 @@ public class User {
     @Id
     private String userId;
 
+    @Column(nullable=false)
     private String document;
+
+    @Column(nullable=false)
     private String name;
+
+    @Column(nullable=false)
     private String surname;
+
+    @Column(nullable=false)
     private String email;
+
     private String telephone;
+    
+    @Column(nullable=false)
     private String cellphone;
     private String expertise;
     private Boolean status;

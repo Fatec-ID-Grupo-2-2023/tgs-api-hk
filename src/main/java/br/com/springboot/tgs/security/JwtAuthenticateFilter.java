@@ -24,7 +24,7 @@ import br.com.springboot.tgs.models.User;
 
 public class JwtAuthenticateFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private static final int TOKEN_EXPIRATION = 600_000;
+    private static final int TOKEN_EXPIRATION = 600_000_000;
     public static final String TOKEN_PASSWORD = "191782f8-9c38-459f-b8a8-262f1e800bff";
 
     public JwtAuthenticateFilter(AuthenticationManager authenticationManager) {
