@@ -17,4 +17,11 @@ public interface ConsultRepository extends RepositoriesModel<Consult>, JpaReposi
    */
   @Query("SELECT u from Consult u where u.status = :status")
   public List<Consult> findAllByStatus(@Param("status") Boolean status);
+
+  /**
+   * Busca no banco os dados para o grafico de linhas
+   * @return - os dados
+   */
+  @Query("SELECT datename(mm, u.dateTime) as label, count(*) as value from Consult u where datediff(yy, u.dateTime, getdate()) in (0, 1) group by datename(mm, dateTime), month(u.dateTime)")
+  public List<Object> findLineChartData();
 }
