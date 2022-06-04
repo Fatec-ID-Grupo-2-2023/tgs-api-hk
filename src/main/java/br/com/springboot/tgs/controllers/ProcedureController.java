@@ -26,7 +26,6 @@ public class ProcedureController {
 
   @GetMapping("/{id}")
   public Object findById(@PathVariable("id") Integer id) {
-    
     Optional<Procedure> procedureFind = procedureRepository.findById(id);
 
     if (procedureFind.isPresent()) {
@@ -35,10 +34,10 @@ public class ProcedureController {
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
   }
-  
+
   @GetMapping("/list")
   public List<Procedure> findAll() {
-    return this.procedureRepository.findAll();
+    return this.procedureRepository.findAllByStatus(true);
   }
 
   @GetMapping("/list/{status}")
@@ -49,6 +48,7 @@ public class ProcedureController {
   @PostMapping("/")
   public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody Procedure procedure) {
     try {
+      procedure.setStatus(true);
       this.procedureRepository.save(procedure);
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     } catch (Exception e) {
@@ -56,10 +56,11 @@ public class ProcedureController {
     }
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<HttpStatus> remove(@PathVariable("id") Integer id){
+  @PostMapping("/")
+  public ResponseEntity<HttpStatus> remove(@RequestBody Procedure procedure) {
     try {
-      this.procedureRepository.deleteById(id);
+      procedure.setStatus(false);
+      this.procedureRepository.save(procedure);
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
