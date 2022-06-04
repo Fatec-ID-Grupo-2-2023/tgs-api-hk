@@ -32,7 +32,9 @@ public class Patient {
     private String nickname;
     private String birthDate;
     private Float height;
-    private Float weigth;
+
+    @Column(name = "user_weight")
+    private Float weight;
     private String email;
     private String telephone;
 
@@ -57,7 +59,7 @@ public class Patient {
     @Column(nullable = false)
     private Integer number;
     
-    private String compliment;
+    private String complement;
     private Boolean status;
 
     // CPF
@@ -123,13 +125,13 @@ public class Patient {
         this.height = height;
     }
 
-    // WEIGTH
-    public Float getWeigth() {
-        return weigth;
+    // WEIGHT
+    public Float getWeight() {
+        return weight;
     }
 
-    public void setWeigth(Float weigth) {
-        this.weigth = weigth;
+    public void setWeight(Float weight) {
+        this.weight = weight;
     }
 
     // EMAIL
@@ -204,13 +206,13 @@ public class Patient {
         this.cep = cep;
     }
 
-    // COMPLIMENT
-    public String getCompliment() {
-        return compliment;
+    // COMPLEMENT
+    public String getComplement() {
+        return complement;
     }
 
-    public void setCompliment(String compliment) {
-        this.compliment = compliment;
+    public void setComplement(String complement) {
+        this.complement = complement;
     }
 
     // NUMBER

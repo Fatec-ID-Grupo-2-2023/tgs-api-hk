@@ -3,6 +3,8 @@ package br.com.springboot.tgs.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,52 +21,66 @@ import br.com.springboot.tgs.repositories.PatientRepository;
 @RestController
 @RequestMapping("/patients")
 public class PatientController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
 
   @Autowired
   private PatientRepository patientRepository;
 
   @GetMapping("/{cpf}")
   public Object findByCpf(@PathVariable("cpf") String cpf) {
-    Optional<Patient> patientFind = patientRepository.findById(cpf);
+    try {
+      Optional<Patient> patientFind = patientRepository.findById(cpf);
 
-    if (patientFind.isPresent()) {
-      return ResponseEntity.status(HttpStatus.OK).body(patientFind.get());
+      if (patientFind.isPresent()) {
+        LOGGER.info("Search patient - " + cpf);
+
+        return ResponseEntity.status(HttpStatus.OK).body(patientFind.get());
+      }
+    } catch (Exception e) {
+      LOGGER.info("Patient - " + cpf + " not found");
     }
 
-    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
-  }
-
-  @GetMapping("/list")
-  public List<Patient> findAll() {
-    return this.patientRepository.findAllByStatus(true);
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
   }
 
   @GetMapping("/list/{status}")
   public List<Patient> findByStatus(@PathVariable("status") Boolean status) {
+    LOGGER.info("Search patients by status - " + status);
+
     return this.patientRepository.findAllByStatus(status);
   }
 
   @PostMapping("/")
-  public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody Patient patient) {
+  public ResponseEntity<Object> createAndUpdate(@RequestBody Patient patient) {
     try {
       patient.setStatus(true);
 
       this.patientRepository.save(patient);
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+
+      LOGGER.warn("Create patient - " + patient.getCpf());
+
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      LOGGER.error("Create patient fail - ", e.getMessage());
+
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
-  
+
   @PostMapping("/remove")
-  public ResponseEntity<HttpStatus> remove(@RequestBody Patient patient) {
+  public ResponseEntity<Object> remove(@RequestBody Patient patient) {
     try {
       patient.setStatus(false);
 
       this.patientRepository.save(patient);
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+
+      LOGGER.warn("Remove patient - " + patient.getCpf());
+
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      LOGGER.error("Remove patient fail - ", e.getMessage());
+
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
 }
