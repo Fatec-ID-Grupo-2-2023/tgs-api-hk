@@ -3,6 +3,8 @@ package br.com.springboot.tgs.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,8 @@ import br.com.springboot.tgs.repositories.PatientRepository;
 @RestController
 @RequestMapping("/patients")
 public class PatientController {
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
+  
   @Autowired
   private PatientRepository patientRepository;
 
@@ -28,19 +31,19 @@ public class PatientController {
     Optional<Patient> patientFind = patientRepository.findById(cpf);
 
     if (patientFind.isPresent()) {
+      LOGGER.info("Search patient - " + patientFind.get().getCpf());
+      
       return ResponseEntity.status(HttpStatus.OK).body(patientFind.get());
     }
+    LOGGER.info("Patient - " + patientFind.get().getCpf() + " not found");
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
   }
 
-  @GetMapping("/list")
-  public List<Patient> findAll() {
-    return this.patientRepository.findAllByStatus(true);
-  }
-
   @GetMapping("/list/{status}")
   public List<Patient> findByStatus(@PathVariable("status") Boolean status) {
+    LOGGER.info("Search patients by status - " + status);
+
     return this.patientRepository.findAllByStatus(status);
   }
 
@@ -50,8 +53,13 @@ public class PatientController {
       patient.setStatus(true);
 
       this.patientRepository.save(patient);
+
+      LOGGER.warn("Create patient - " + patient.getCpf());
+
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     } catch (Exception e) {
+      LOGGER.error("Create patient fail - ", e.getMessage());
+
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
   }
@@ -62,8 +70,13 @@ public class PatientController {
       patient.setStatus(false);
 
       this.patientRepository.save(patient);
+
+      LOGGER.warn("Remove patient - " + patient.getCpf());
+
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     } catch (Exception e) {
+      LOGGER.error("Remove patient fail - ", e.getMessage());
+
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
   }

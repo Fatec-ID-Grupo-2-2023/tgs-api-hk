@@ -2,6 +2,8 @@ package br.com.springboot.tgs.services;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,15 +19,19 @@ public class UserDetailService implements UserDetailsService{
     @Autowired
     private UserRepository userRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailService.class);
+
     @Override
     public UserDetails loadUserByUsername(String _user) throws UsernameNotFoundException {
-        // TODO Auto-generated method stub
         Optional<User> user = userRepository.findById(_user);
+
         if(!user.isPresent()){
-            throw new UsernameNotFoundException("Dentista [" + user + "] não encontrado");
+            LOGGER.warn("User [" + user + "] not found");
+            throw new UsernameNotFoundException("User [" + user + "] not found");
         }
 
+        LOGGER.info("User loaded [" + user + "]");
+
         return new UserDetailData(user);
-    }
-    
+    }   
 }
