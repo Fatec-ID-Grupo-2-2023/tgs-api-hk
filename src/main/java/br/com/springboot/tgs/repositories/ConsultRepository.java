@@ -6,15 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.entities.Patient;
+import br.com.springboot.tgs.entities.Consult;
 import br.com.springboot.tgs.models.RepositoriesModel;
 
-public interface PatientRepository extends RepositoriesModel<Patient>, JpaRepository<Patient, String> {
+public interface ConsultRepository extends RepositoriesModel<Consult>, JpaRepository<Consult, Integer>{  
   /**
    * 
    * @param status - Recebe o status por parametro
-   * @return - Retorna a lista de pacientes referentes ao status recebido
+   * @return - Retorna a lista de consultas referentes ao status recebido
    */
-  @Query("SELECT u from Patient u where u.status = :status")
-  public List<Patient> findAllByStatus(@Param("status") Boolean status);
+  @Query("SELECT u from Consult u where u.status = :status")
+  public List<Consult> findAllByStatus(@Param("status") Boolean status);
 }

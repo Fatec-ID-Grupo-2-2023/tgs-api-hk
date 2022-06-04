@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.springboot.tgs.models.Procedure;
+import br.com.springboot.tgs.entities.Procedure;
+import br.com.springboot.tgs.models.RepositoriesModel;
 
-public interface ProcedureRepository extends JpaRepository<Procedure, Integer> {
-  @Query("SELECT u from Procedure u where u.id > :id")
-  public List<Procedure> findAllMoreThan(@Param("id") Integer id);
-
+public interface ProcedureRepository extends RepositoriesModel<Procedure>, JpaRepository<Procedure, Integer> {
+  /**
+   * 
+   * @param status - Recebe o status por parametro
+   * @return - Retorna a lista de procedimentos referentes ao status recebido
+   */
   @Query("SELECT u from Procedure u where u.status = :status")
   public List<Procedure> findAllByStatus(@Param("status") Boolean status);
 }

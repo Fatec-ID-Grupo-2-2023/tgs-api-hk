@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,19 +16,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.springboot.tgs.models.Procedure;
+import br.com.springboot.tgs.entities.Procedure;
+import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.ProcedureRepository;
 
 @RestController
 @RequestMapping("/procedures")
-public class ProcedureController {
+@CrossOrigin
+public class ProcedureController implements RestControllerModel<Procedure, Integer>{
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
 
     @Autowired
     private ProcedureRepository procedureRepository;
 
+    /**
+     * 
+     * @param id - Recebe o id do procedimento por parametro
+     * @return - Retorna as informações do procedimento correspondente
+     */
     @GetMapping("/{id}")
-    public Object findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try {
             Optional<Procedure> procedureFind = procedureRepository.findById(id);
 
@@ -43,6 +51,11 @@ public class ProcedureController {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
+    /**
+     * 
+     * @param status - Recebe o status do procedimento
+     * @return - Busca a lista de procedimentos referentes ao status recebido
+     */
     @GetMapping("/list/{status}")
     public List<Procedure> findByStatus(@PathVariable("status") Boolean status) {
         LOGGER.info("Search procedures by status - " + status);
@@ -50,6 +63,11 @@ public class ProcedureController {
         return this.procedureRepository.findAllByStatus(status);
     }
 
+    /**
+     * 
+     * @param procedure - Recebe um procedimento para cadastrar ou atualizar no banco
+     * @return - Retorna uma mensagem de sucesso ou erro
+     */
     @PostMapping("/")
     public ResponseEntity<Object> createAndUpdate(@RequestBody Procedure procedure) {
         try {
@@ -67,6 +85,11 @@ public class ProcedureController {
         }
     }
 
+    /**
+     * 
+     * @param procedure - Recebe um procedimento para remover do banco
+     * @return - Retorna uma mensagem de sucesso ou erro 
+     */
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Procedure procedure) {
         try {

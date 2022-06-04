@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import br.com.springboot.tgs.data.UserDetailData;
-import br.com.springboot.tgs.models.User;
+import br.com.springboot.tgs.entities.User;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @Component

@@ -22,7 +22,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.com.springboot.tgs.data.UserDetailData;
-import br.com.springboot.tgs.models.User;
+import br.com.springboot.tgs.entities.User;
 
 public class JwtAuthenticateFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
