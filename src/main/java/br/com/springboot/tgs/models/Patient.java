@@ -1,7 +1,5 @@
 package br.com.springboot.tgs.models;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,7 +30,7 @@ public class Patient {
     private String surname;
 
     private String nickname;
-    private Date birthDate;
+    private String birthDate;
     private Float height;
     private Float weigth;
     private String email;
@@ -108,11 +106,11 @@ public class Patient {
     }
 
     // BIRTH DATE
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
