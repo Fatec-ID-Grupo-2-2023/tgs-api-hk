@@ -45,22 +45,22 @@ public class ProcedureController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody Procedure procedure) {
+  public ResponseEntity<Object> createAndUpdate(@RequestBody Procedure procedure) {
     try {
       procedure.setStatus(true);
       this.procedureRepository.save(procedure);
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
   }
 
   @PostMapping("/remove")
-  public ResponseEntity<HttpStatus> remove(@RequestBody Procedure procedure) {
+  public ResponseEntity<Object> remove(@RequestBody Procedure procedure) {
     try {
       procedure.setStatus(false);
       this.procedureRepository.save(procedure);
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
