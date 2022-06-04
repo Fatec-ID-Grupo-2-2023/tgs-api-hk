@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.springboot.tgs.entities.Consult;
+import br.com.springboot.tgs.entities.LineChart;
 import br.com.springboot.tgs.models.RestControllerModel;
 import br.com.springboot.tgs.repositories.ConsultRepository;
 
@@ -63,6 +64,23 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
         LOGGER.info("Search consults by status - " + status);
 
         return this.consultRepository.findAllByStatus(status);
+    }
+
+    /**
+     * Buscar dados para o grafico de linhas
+     * @return - os dados
+     */
+    @GetMapping("/chart/line")
+    public ResponseEntity<Object> getChartLine() {
+        try {
+            String[] labels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+            int[] data = {0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000};
+            LineChart lc = new LineChart(labels, data);
+            return ResponseEntity.status(HttpStatus.OK).body(lc);
+        } catch (Exception e) {
+            LOGGER.info("Unable to create the line chart");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
     }
 
     /**
