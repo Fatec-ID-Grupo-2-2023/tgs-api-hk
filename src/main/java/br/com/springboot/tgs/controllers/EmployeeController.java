@@ -67,6 +67,7 @@ public class EmployeeController {
   @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody User employee) {
     try {
+      employee.setUserId(PREFIX_EMPLOYEE_USER_ID + employee.getDocument());
       employee.setStatus(false);
       this.userRepository.save(employee);
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);

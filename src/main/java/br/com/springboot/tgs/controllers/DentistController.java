@@ -66,6 +66,7 @@ public class DentistController {
   @PostMapping("/remove")
   public ResponseEntity<HttpStatus> remove(@RequestBody User dentist) {
     try {
+      dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
       dentist.setStatus(false);
       this.userRepository.save(dentist);
       return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
