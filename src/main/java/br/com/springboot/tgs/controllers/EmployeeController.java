@@ -20,7 +20,7 @@ import br.com.springboot.tgs.models.User;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @RestController
-@RequestMapping("/employees") 
+@RequestMapping("/employees")
 public class EmployeeController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
 
@@ -34,17 +34,19 @@ public class EmployeeController {
 
   @GetMapping("/{user}")
   public Object findByUser(@PathVariable("user") String user) {
+    try {
+      Optional<User> employeeFind = userRepository.findById(user);
 
-    Optional<User> employeeFind = userRepository.findById(user);
+      if (employeeFind.isPresent()) {
+        LOGGER.info("Search employee - " + user);
 
-    if (employeeFind.isPresent()) {
-      LOGGER.info("Search employee - " + employeeFind.get().getUserId());
-
-      return ResponseEntity.status(HttpStatus.OK).body(employeeFind.get());      
+        return ResponseEntity.status(HttpStatus.OK).body(employeeFind.get());
+      }
+    } catch (Exception e) {
+      LOGGER.info("Employee - " + user + " not found");
     }
-    LOGGER.info("Employee - " + employeeFind.get().getUserId() + " not found");
 
-    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
   }
 
   @GetMapping("/list/{status}")
@@ -55,26 +57,26 @@ public class EmployeeController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody User employee) {
+  public ResponseEntity<Object> createAndUpdate(@RequestBody User employee) {
     try {
       employee.setUserId(PREFIX_EMPLOYEE_USER_ID + employee.getDocument());
       employee.setPassword(encoder.encode(employee.getPassword()));
       employee.setStatus(true);
-      
+
       this.userRepository.save(employee);
 
       LOGGER.warn("Create employee - " + employee.getUserId());
 
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);        
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       LOGGER.error("Create employee fail - ", e.getMessage());
 
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
 
   @PostMapping("/remove")
-  public ResponseEntity<HttpStatus> remove(@RequestBody User employee) {
+  public ResponseEntity<Object> remove(@RequestBody User employee) {
     try {
       employee.setUserId(PREFIX_EMPLOYEE_USER_ID + employee.getDocument());
       employee.setStatus(false);
@@ -83,11 +85,11 @@ public class EmployeeController {
 
       LOGGER.warn("Remove employee - " + employee.getUserId());
 
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       LOGGER.error("Remove employee fail - ", e.getMessage());
 
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
 }

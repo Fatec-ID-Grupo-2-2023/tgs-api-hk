@@ -22,22 +22,25 @@ import br.com.springboot.tgs.repositories.PatientRepository;
 @RequestMapping("/patients")
 public class PatientController {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureController.class);
-  
+
   @Autowired
   private PatientRepository patientRepository;
 
   @GetMapping("/{cpf}")
   public Object findByCpf(@PathVariable("cpf") String cpf) {
-    Optional<Patient> patientFind = patientRepository.findById(cpf);
+    try {
+      Optional<Patient> patientFind = patientRepository.findById(cpf);
 
-    if (patientFind.isPresent()) {
-      LOGGER.info("Search patient - " + patientFind.get().getCpf());
-      
-      return ResponseEntity.status(HttpStatus.OK).body(patientFind.get());
+      if (patientFind.isPresent()) {
+        LOGGER.info("Search patient - " + cpf);
+
+        return ResponseEntity.status(HttpStatus.OK).body(patientFind.get());
+      }
+    } catch (Exception e) {
+      LOGGER.info("Patient - " + cpf + " not found");
     }
-    LOGGER.info("Patient - " + patientFind.get().getCpf() + " not found");
 
-    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
   }
 
   @GetMapping("/list/{status}")
@@ -48,7 +51,7 @@ public class PatientController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody Patient patient) {
+  public ResponseEntity<Object> createAndUpdate(@RequestBody Patient patient) {
     try {
       patient.setStatus(true);
 
@@ -56,16 +59,16 @@ public class PatientController {
 
       LOGGER.warn("Create patient - " + patient.getCpf());
 
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       LOGGER.error("Create patient fail - ", e.getMessage());
 
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
-  
+
   @PostMapping("/remove")
-  public ResponseEntity<HttpStatus> remove(@RequestBody Patient patient) {
+  public ResponseEntity<Object> remove(@RequestBody Patient patient) {
     try {
       patient.setStatus(false);
 
@@ -73,11 +76,11 @@ public class PatientController {
 
       LOGGER.warn("Remove patient - " + patient.getCpf());
 
-      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     } catch (Exception e) {
       LOGGER.error("Remove patient fail - ", e.getMessage());
 
-      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
   }
 }

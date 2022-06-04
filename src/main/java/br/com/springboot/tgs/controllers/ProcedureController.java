@@ -28,17 +28,19 @@ public class ProcedureController {
 
     @GetMapping("/{id}")
     public Object findById(@PathVariable("id") Integer id) {
-        Optional<Procedure> procedureFind = procedureRepository.findById(id);
+        try {
+            Optional<Procedure> procedureFind = procedureRepository.findById(id);
 
-        if (procedureFind.isPresent()) {
-            LOGGER.info("Search procedure - " + procedureFind.get().getId());
+            if (procedureFind.isPresent()) {
+                LOGGER.info("Search procedure - " + id);
 
-            return ResponseEntity.status(HttpStatus.OK).body(procedureFind.get());
+                return ResponseEntity.status(HttpStatus.OK).body(procedureFind.get());
+            }
+        } catch (Exception e) {            
+            LOGGER.info("Procedure - " + id + " not found");
         }
 
-        LOGGER.info("Procedure - " + procedureFind.get().getId() + " not found");
-
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
     @GetMapping("/list/{status}")
@@ -61,7 +63,7 @@ public class ProcedureController {
         } catch (Exception e) {
             LOGGER.error("Create procedure fail - ", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
         }
     }
 
@@ -78,7 +80,7 @@ public class ProcedureController {
         } catch (Exception e) {
             LOGGER.error("Remove procedure fail - ", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
         }
     }
 }

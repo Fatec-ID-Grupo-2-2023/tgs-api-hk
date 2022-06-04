@@ -34,17 +34,19 @@ public class DentistController {
 
     @GetMapping("/{user}")
     public Object findByUser(@PathVariable("user") String user) {
-        Optional<User> dentistFind = userRepository.findById(user);
+        try {
+            Optional<User> dentistFind = userRepository.findById(user);
 
         if (dentistFind.isPresent()) {
-            LOGGER.info("Search dentist - " + dentistFind.get().getUserId());
+            LOGGER.info("Search dentist - " + user);
 
             return ResponseEntity.status(HttpStatus.OK).body(dentistFind.get());
         }
-
-        LOGGER.info("Dentist - " + dentistFind.get().getUserId() + " not found");
-
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+        } catch (Exception e) {
+            LOGGER.info("Dentist - " + user + " not found");
+        }
+        
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
     @GetMapping("/list/{status}")
@@ -55,7 +57,7 @@ public class DentistController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<HttpStatus> createAndUpdate(@RequestBody User dentist) {
+    public ResponseEntity<Object> createAndUpdate(@RequestBody User dentist) {
         try {
             dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
             dentist.setPassword(encoder.encode(dentist.getPassword()));
@@ -65,16 +67,16 @@ public class DentistController {
 
             LOGGER.warn("Create dentist - " + dentist.getUserId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
         } catch (Exception e) {
             LOGGER.error("Create dentist fail - ", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
         }
     }
 
     @PostMapping("/remove")
-    public ResponseEntity<HttpStatus> remove(@RequestBody User dentist) {
+    public ResponseEntity<Object> remove(@RequestBody User dentist) {
         try {
             dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
             dentist.setStatus(false);
@@ -83,11 +85,11 @@ public class DentistController {
 
             LOGGER.warn("Remove dentist - " + dentist.getUserId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
         } catch (Exception e) {
             LOGGER.error("Remove dentist fail - ", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
         }
     }
 }
