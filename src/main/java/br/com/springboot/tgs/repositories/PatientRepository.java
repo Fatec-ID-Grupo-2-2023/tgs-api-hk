@@ -11,9 +11,10 @@ import br.com.springboot.tgs.interfaces.RepositoriesModel;
 
 public interface PatientRepository extends RepositoriesModel<Patient>, JpaRepository<Patient, String> {
   /**
+   * Busca todos os pacientes
    * 
-   * @param status - Recebe o status por parametro
-   * @return - Retorna a lista de pacientes referentes ao status recebido
+   * @param status - Recebe o status do paciente
+   * @return - Busca a lista de pacientes referentes ao status recebido
    */
   @Query("SELECT u from Patient u where u.status = :status")
   public List<Patient> findAllByStatus(@Param("status") Boolean status);

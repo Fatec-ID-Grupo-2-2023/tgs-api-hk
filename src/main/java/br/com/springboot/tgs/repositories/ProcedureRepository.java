@@ -11,9 +11,10 @@ import br.com.springboot.tgs.interfaces.RepositoriesModel;
 
 public interface ProcedureRepository extends RepositoriesModel<Procedure>, JpaRepository<Procedure, Integer> {
   /**
+   * Busca todos os procedimentos
    * 
-   * @param status - Recebe o status por parametro
-   * @return - Retorna a lista de procedimentos referentes ao status recebido
+   * @param status - Recebe o status do procedimento
+   * @return - Busca a lista de procedimentos referentes ao status recebido
    */
   @Query("SELECT u from Procedure u where u.status = :status")
   public List<Procedure> findAllByStatus(@Param("status") Boolean status);

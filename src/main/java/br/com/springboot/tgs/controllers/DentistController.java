@@ -24,10 +24,10 @@ import br.com.springboot.tgs.repositories.UserRepository;
 @RestController
 @RequestMapping("/dentists")
 @CrossOrigin
-public class DentistController implements RestControllerModel<User, String>{
+public class DentistController implements RestControllerModel<User, String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(DentistController.class);
 
-    private final String PREFIX_DENTIST_USER_ID = "DTN";
+    public static final String PREFIX_DENTIST_USER_ID = "DTN-";
 
     @Autowired
     private UserRepository userRepository;
@@ -36,29 +36,39 @@ public class DentistController implements RestControllerModel<User, String>{
     private PasswordEncoder encoder;
 
     /**
+     * Busca um dentista pelo id
      * 
-     * @param user - Recebe o usuario do dentista por parametro
+     * @param document - Recebe o documento do dentista
      * @return - Retorna as informações do dentista correspondente
      */
     @Override
-    @GetMapping("/{user}")
-    public ResponseEntity<Object> findById(@PathVariable("user") String user) {
+    @GetMapping("/{document}")
+    public ResponseEntity<Object> findById(@PathVariable("document") String document) {
         try {
-            Optional<User> dentistFind = userRepository.findById(user);
+            if (document == null || document.isEmpty()
+                    || !ValidateController.validateCRO(document)) {
+                throw new IllegalArgumentException("Documento inválido");
+            }
 
-        if (dentistFind.isPresent()) {
-            LOGGER.info("Search dentist - " + user);
+            String userId = PREFIX_DENTIST_USER_ID + document;
 
-            return ResponseEntity.status(HttpStatus.OK).body(dentistFind.get());
-        }
+            Optional<User> dentistFind = userRepository.findById(userId);
+
+            if (dentistFind.isPresent()) {
+                LOGGER.info("Search dentist - " + userId);
+
+                return ResponseEntity.status(HttpStatus.OK).body(dentistFind.get());
+            } else {
+                throw new IllegalArgumentException("Dentista não encontrado");
+            }
         } catch (Exception e) {
-            LOGGER.info("Dentist - " + user + " not found");
+            LOGGER.info("Dentist not found - " + e);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
-        
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
     }
 
     /**
+     * Busca todos os dentistas
      * 
      * @param status - Recebe o status do dentista
      * @return - Busca a lista de dentistas referentes ao status recebido
@@ -72,51 +82,114 @@ public class DentistController implements RestControllerModel<User, String>{
     }
 
     /**
+     * Registra|Atualiza um dentista
      * 
-     * @param dentist - Recebe um dentista para cadastrar ou atualizar no banco
+     * @param dentist - Recebe um dentista para cadastrar ou atualizar
      * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
     @PostMapping("/")
     public ResponseEntity<Object> createAndUpdate(@RequestBody User dentist) {
         try {
-            dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
-            dentist.setPassword(encoder.encode(dentist.getPassword()));
             dentist.setStatus(true);
+
+            validateDentist(dentist);
+
+            dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
+
+            Optional<User> user = userRepository.findById(dentist.getUserId());
+
+            if (user.isPresent()) {
+                dentist.setPassword(user.get().getPassword());
+            } else {
+                dentist.setPassword(encoder.encode(dentist.getPassword()));
+            }
 
             this.userRepository.save(dentist);
 
             LOGGER.warn("Create dentist - " + dentist.getUserId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.error("Create dentist fail - ", e.getMessage());
+            LOGGER.error("Create dentist fail - ", e);
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
         }
     }
 
     /**
+     * Desativa um dentista
      * 
-     * @param dentist - Recebe um dentista para remover do banco
-     * @return - Retorna uma mensagem de sucesso ou erro 
+     * @param u - Recebe o documento do dentista para desativar
+     * @return - Retorna uma mensagem de sucesso ou erro
      */
     @Override
     @PostMapping("/remove")
-    public ResponseEntity<Object> remove(@RequestBody User dentist) {
-        try {
-            dentist.setUserId(PREFIX_DENTIST_USER_ID + dentist.getDocument());
+    public ResponseEntity<Object> remove(@RequestBody User u) {
+        try {        
+            if (u.getDocument() == null || u.getDocument().isEmpty()
+                    || !ValidateController.validateCRO(u.getDocument())) {
+                throw new IllegalArgumentException("Documento inválido");
+            }
+
+            u.setUserId(PREFIX_DENTIST_USER_ID + u.getDocument());
+
+            User dentist = userRepository.findById(u.getUserId()).get();
+
+            validateDentist(dentist);
+
             dentist.setStatus(false);
 
             this.userRepository.save(dentist);
 
             LOGGER.warn("Remove dentist - " + dentist.getUserId());
 
-            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.error("Remove dentist fail - ", e.getMessage());
+            LOGGER.error("Remove dentist fail - ", e);
 
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HttpStatus.NOT_ACCEPTABLE.toString());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Valida os dados do dentista
+     * 
+     * @param dentist - Recebe o dentista para validar
+     */
+    private void validateDentist(User dentist) {
+        if (dentist.getDocument() == null || dentist.getDocument().isEmpty()
+                || !ValidateController.validateCRO(dentist.getDocument())) {
+            throw new IllegalArgumentException("Documento inválido");
+        }
+
+        if (dentist.getName() == null || dentist.getName().isEmpty()
+                || !ValidateController.validateText(dentist.getName())) {
+            throw new IllegalArgumentException("Nome inválido");
+        }
+
+        if (dentist.getSurname() == null || dentist.getSurname().isEmpty()
+                || !ValidateController.validateText(dentist.getSurname())) {
+            throw new IllegalArgumentException("Sobrenome inválido");
+        }
+
+        if (dentist.getEmail() == null || dentist.getEmail().isEmpty()
+                || !ValidateController.validateEmail(dentist.getEmail())) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+
+        if (dentist.getTelephone() != null && !dentist.getTelephone().isEmpty()
+                && !ValidateController.validateTelephone(dentist.getTelephone())) {
+            throw new IllegalArgumentException("Telefone inválido");
+        }
+
+        if (dentist.getExpertise() != null && !dentist.getExpertise().isEmpty()
+                && !ValidateController.validateText(dentist.getExpertise())) {
+            throw new IllegalArgumentException("Especialidade inválida");
+        }
+
+        if (dentist.getStatus() == null) {
+            throw new IllegalArgumentException("Status inválido");
         }
     }
 }

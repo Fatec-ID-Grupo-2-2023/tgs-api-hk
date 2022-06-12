@@ -15,7 +15,7 @@ import br.com.springboot.tgs.entities.models.User;
 import br.com.springboot.tgs.repositories.UserRepository;
 
 @Component
-public class UserDetailService implements UserDetailsService{
+public class UserDetailService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -25,7 +25,7 @@ public class UserDetailService implements UserDetailsService{
     public UserDetails loadUserByUsername(String _user) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findById(_user);
 
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             LOGGER.warn("User [" + user + "] not found");
             throw new UsernameNotFoundException("User [" + user + "] not found");
         }
@@ -33,5 +33,5 @@ public class UserDetailService implements UserDetailsService{
         LOGGER.info("User loaded [" + user + "]");
 
         return new UserDetailData(user);
-    }   
+    }
 }

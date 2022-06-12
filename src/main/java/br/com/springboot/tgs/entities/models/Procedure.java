@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class Procedure {
   private String description;
   private Boolean status;
 
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @OneToMany(mappedBy = "procedure", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Consult> consults = new ArrayList<>();
 
