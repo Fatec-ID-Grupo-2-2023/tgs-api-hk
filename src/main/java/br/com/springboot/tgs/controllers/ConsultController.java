@@ -217,15 +217,8 @@ public class ConsultController implements RestControllerModel<Consult, Integer> 
      */
     @PostMapping("/remove")
     public ResponseEntity<Object> removeAppointment(@RequestBody ConsultPlain consultPlain) {
-        try {
-            validateConsult(consultPlain);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime currentDateTime = LocalDateTime
-                    .parse(consultPlain.getDate().toString() + " " + consultPlain.getHour().toString(), formatter);
-
-            Consult consult = new Consult(consultPlain.getId(), consultPlain.getPatient(), consultPlain.getDentist(),
-                    currentDateTime, consultPlain.getProcedure(), consultPlain.getEmployee(), consultPlain.getStatus());
+        try {            
+            Consult consult = this.consultRepository.findById(consultPlain.getId()).get();
 
             remove(consult);
             return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);

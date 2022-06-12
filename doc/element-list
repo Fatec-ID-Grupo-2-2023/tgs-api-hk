@@ -1,0 +1,9 @@
+br.com.springboot.tgs
+br.com.springboot.tgs.controllers
+br.com.springboot.tgs.data
+br.com.springboot.tgs.entities
+br.com.springboot.tgs.entities.models
+br.com.springboot.tgs.interfaces
+br.com.springboot.tgs.repositories
+br.com.springboot.tgs.security
+br.com.springboot.tgs.services
