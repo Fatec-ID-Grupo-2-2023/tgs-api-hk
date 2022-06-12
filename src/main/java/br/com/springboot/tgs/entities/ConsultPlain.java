@@ -14,16 +14,15 @@ public class ConsultPlain {
     private Patient patient;
     private User dentist;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime hour;
 
     private Procedure procedure;
     private User employee;
     private Boolean status;
-
 
     public Integer getId() {
         return id;

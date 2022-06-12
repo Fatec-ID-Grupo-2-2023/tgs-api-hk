@@ -11,28 +11,27 @@ public class Schedule {
     private User dentist;
     private User employee;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime consultDuration;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate finalDate;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startWorkHour;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime finalWorkHour;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startLunchHour;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime finalLunchHour;
 
-    
     // DENTIST
     public User getDentist() {
         return dentist;
@@ -41,7 +40,7 @@ public class Schedule {
     public void setDentist(User dentist) {
         this.dentist = dentist;
     }
-    
+
     // EMPLOYEE
     public User getEmployee() {
         return employee;

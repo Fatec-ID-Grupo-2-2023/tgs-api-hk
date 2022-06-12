@@ -2,131 +2,94 @@ package br.com.springboot.tgs.controllers;
 
 public class ValidateController {
 
-    // CPF
     /**
-     * Validador de Cpf, se estiver correto, devolve "true".
-     * Se estiver falso, retorna "false".
+     * Valida o cpf [formato: 99999999999]
      * 
-     * @param cpf Cpf a ser validado
-     * @return true or false
+     * @param cpf - CPF a ser validado
+     * @return true|false
      */
     public static boolean validateCPF(String cpf) {
-        if (cpf.length() == 11) {
-            return cpf.matches("[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{2}");
-        }
-        return false;
+        return ((cpf.length() == 11) && (cpf.matches("[0-9]{11}")));
     }
 
-    // CEP
     /**
-     * Validador de Cep, se estiver correto. Devolve "true",
-     * e se estiver falso, retorna "false".
+     * Valida o cep [formato: 99999999]
      * 
-     * @param cep Cep a ser validado.
-     * @return true or false
+     * @param cep - CEP a ser validado.
+     * @return true|false
      */
     public static boolean validateCEP(String cep) {
-
-        if (cep.length() == 8) {
-            return cep.matches("\\d{5}\\d{3}");
-        }
-        return false;
+        return ((cep.length() == 8) && (cep.matches("[0-9]{8}")));
     }
 
-    // TEXTO
-
     /**
-     * Validador de Texto, se estiver correto. Devolve "true",
-     * e se estiver falso, retorna "false".
+     * Valida texto
      * 
-     * @param text Texto a ser validado.
-     * @return true ou false.
+     * @param text - Texto a ser validado.
+     * @return true|false.
      */
     public static boolean validateText(String text) {
-        // return text.matches("([A-Z][a-z]* [A-Z][a-z]*)|([A-Z][a-z]*)");
-        // return text.matches("[a-zA-Z]*");
-
-        return text.matches("[a-zA-ZáàâãéèêíóôõúçñÁÀÂÃÉÈÍÓÔÕÚÇ]*");
+        return text.matches("[a-zA-ZáàâãéèêíóôõúçñÁÀÂÃÉÈÍÓÔÕÚÇ ]*");
     }
 
-    // RG
     /**
-     * Validador de Rg, se estiver correto. Devolve "true",
-     * e se estiver falso, retorna "false".
+     * Valida texto e/ou numero
      * 
-     * @param rg Rg a ser validado.
-     * @return true or false
+     * @param text Texto a ser validado.
+     * @return true|false.
+     */
+    public static boolean validateTextAndNumber(String text) {
+        return text.matches("[1-9a-zA-ZáàâãéèêíóôõúçñÁÀÂÃÉÈÍÓÔÕÚÇ ]*");
+    }
+
+    /**
+     * Valida rg [formato: 999999999]
+     * 
+     * @param rg - RG a ser validado.
+     * @return true|false
      */
     public static boolean validateRG(String rg) {
-
-        if (rg.length() == 9) {
-            return rg.matches("[0-9]{2}[0-9]{3}[0-9]{3}[0-9]{1}");
-        }
-        return false;
-
+        return ((rg.length() == 9) && (rg.matches("[0-9]{9}")));
     }
 
-    // TELEFONE
     /**
-     * Validador de Telefone,se estiver correto. Devolve "true",
-     * e se estiver falso, retorna "false".
+     * Valida telefone [formato: 9999999999]
      * 
-     * @param telephone Telefone a ser validado.
-     * @return true or false
+     * @param telephone - Telefone a ser validado.
+     * @return true|false
      */
     public static boolean validateTelephone(String telephone) {
-
-        if (telephone.length() == 10) {
-            return telephone.matches("[0-9]{2}[0-9]{4}[0-9]{4}");
-        }
-        return false;
+        return ((telephone.length() == 10) && (telephone.matches("[0-9]{10}")));
     }
 
-    // CELULAR
     /**
-     * Validar número de celular, se estiver correto, devolve "true".
-     * e estiver errado, retorna "false".
+     * Valida celular [formato: 99999999999]
      * 
-     * @param cellphone Número de celular, a ser validado.
-     * @return true or false
+     * @param cellphone - Celular a ser validado.
+     * @return true|false
      */
-    public static boolean validateCelular(String cellphone) {
-
-        if (cellphone.length() == 11) {
-            return cellphone.matches("\\d{2}\\d{5}\\d{4}");
-        }
-        return false;
+    public static boolean validateCellphone(String cellphone) {
+        return ((cellphone.length() == 11) && (cellphone.matches("[0-9]{11}")));
     }
 
-    // E-MAIL
     /**
-     * Validador de e-mail, se estiver correto,devolve "true".
-     * Se estiver errado, retorna "false".
+     * Valida e-mail
      * 
      * @param email E-mail a ser validado.
-     * @return true or false.
+     * @return true|false.
      */
     public static boolean validateEmail(String email) {
         return email.matches(
                 "(((\"\")(\"\".+?\"\"@)|(([0-9a-zA-Z]((\\.(?!\\.))|[-!#%&'*+/=?^`{}|~\\w])*)([0-9a-zA-Z])@))((\\[)(\\[(\\d{1,3}\\.){3}\\d{1,3}])|(([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,6})))");
-        // return email.matches("[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}");
-
     }
 
-    // CRO
     /**
-     * Validador de Cro, se estiver correto, devolve "true".
-     * Se estiver errado, retorna "false".
+     * Valida cro [formato: 999999]
      * 
-     * @param cro Cro a ser validado.
-     * @return true or false.
+     * @param cro - CRO a ser validado.
+     * @return true|false.
      */
     public static boolean validateCRO(String cro) {
-
-        if (cro.length() == 5) {
-            return cro.matches("\\d{2}\\d{3}");
-        }
-        return false;
+        return ((cro.length() == 6) && (cro.matches("[0-9]{6}")));
     }
-
 }

@@ -9,11 +9,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class TgsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TgsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TgsApplication.class, args);
+    }
 
-	@Bean
+    @Bean
     public PasswordEncoder getPasswordEncoder() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder;
