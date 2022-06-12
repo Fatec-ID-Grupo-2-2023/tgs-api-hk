@@ -100,11 +100,11 @@ public class ProcedureController implements RestControllerModel<Procedure, Integ
     @PostMapping("/remove")
     public ResponseEntity<Object> remove(@RequestBody Procedure procedure) {
         try {
-            procedure.setStatus(false);
+            Procedure procedureFind = this.procedureRepository.findById(procedure.getId()).get();            
 
-            validateProcedure(procedure);
-
-            this.procedureRepository.save(procedure);
+            procedureFind.setStatus(false);
+            
+            this.procedureRepository.save(procedureFind);
 
             LOGGER.warn("Remove procedure - " + procedure.getId());
 
